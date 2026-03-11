@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gerenciar Matrículas</title>
+
+<link rel="stylesheet" href="css/styles.css">
+
+<style>
+
+.barra-pesquisa{
+margin:20px auto;
+width:300px;
+display:block;
+padding:10px;
+border-radius:5px;
+border:1px solid #f1c40f;
+background:black;
+color:white;
+}
+
+.contador{
+text-align:center;
+margin-top:10px;
+color:#f1c40f;
+font-weight:bold;
+}
+
+.status{
+margin-top:10px;
+padding:5px 10px;
+border-radius:5px;
+display:inline-block;
+font-size:12px;
+}
+
+.ativo{
+background:#2ecc71;
+color:white;
+}
+
+.inativo{
+background:#e74c3c;
+color:white;
+}
+
+.btn-excluir{
+margin-top:10px;
+padding:6px 12px;
+background:#e74c3c;
+border:none;
+color:white;
+cursor:pointer;
+border-radius:5px;
+}
+
+.botoes-flutuantes{
+position:fixed;
+bottom:20px;
+right:20px;
+display:flex;
+flex-direction:column;
+gap:10px;
+}
+
+.botao-peso{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 15px;
+border-radius:30px;
+background:#f1c40f;
+border:none;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.botao-peso:hover{
+transform:scale(1.05);
+background:#d4ac0d;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header class="navbar">
+
+<img src="img/logo.png" class="logo">
+
+<nav>
+
+<a href="index.html">Cadastro</a>
+<a href="dashboard.html">Gerenciar Matrículas</a>
+
+</nav>
+
+</header>
+
+<section class="dashboard">
+
+<h1 style="text-align:center">Alunos Matriculados</h1>
+
+<div class="contador" id="contador">
+Total de alunos: 0
+</div>
+
+<input
+type="text"
+placeholder="Pesquisar aluno..."
+class="barra-pesquisa"
+id="pesquisa"
+onkeyup="pesquisarAluno()"
+>
+
+<div class="cards" id="cards"></div>
+
+</section>
+
+<footer>
+
+<p>Fitness Center © 2026</p>
+
+</footer>
+
+<div class="botoes-flutuantes">
+
+<button class="botao-peso" onclick="limparAlunos()">
+🏋️ Limpar Tudo
+</button>
+
+<button class="botao-peso" onclick="apagarUltimo()">
+❌ Apagar Último
+</button>
+
+</div>
+
+<script>
+
+let alunos = JSON.parse(localStorage.getItem("alunos")) || [];
+
+let container = document.getElementById("cards");
+
+let contador = document.getElementById("contador");
+
+function mostrarAlunos(lista){
+
+container.innerHTML="";
+
+if(lista.length === 0){
+
+container.innerHTML = `
+<p style="text-align:center;
+color:#aaa;
+margin-top:40px;
+font-size:18px;">
+Nenhum aluno matriculado ainda.<br>
+Faça uma matrícula no cadastro.
+</p>
+`;
+
+contador.innerHTML = "Total de alunos: 0";
+
+return;
+
+}
+
+lista.forEach((aluno,index)=>{
+
+let card=document.createElement("div");
+
+card.classList.add("card");
+
+let status = index % 2 === 0 ? "ativo" : "inativo";
+
+card.innerHTML=`
+
+<h3>${aluno.nome}</h3>
+
+<p><b>Plano:</b> ${aluno.plano}</p>
+
+<p><b>Treino:</b> ${aluno.treino}</p>
+
+<p><b>Professor:</b> ${aluno.professor}</p>
+
+<span class="status ${status}">
+${status}
+</span>
+
+<button class="btn-excluir" onclick="excluirAluno(${index})">
+Excluir
+</button>
+
+`;
+
+container.appendChild(card);
+
+});
+
+contador.innerHTML = "Total de alunos: " + lista.length;
+
+}
+
+function pesquisarAluno(){
+
+let texto = document.getElementById("pesquisa").value.toLowerCase();
+
+let filtrados = alunos.filter(aluno =>
+aluno.nome.toLowerCase().includes(texto)
+);
+
+mostrarAlunos(filtrados);
+
+}
+
+function excluirAluno(index){
+
+alunos.splice(index,1);
+
+localStorage.setItem("alunos",JSON.stringify(alunos));
+
+mostrarAlunos(alunos);
+
+}
+
+function apagarUltimo(){
+
+alunos.pop();
+
+localStorage.setItem("alunos",JSON.stringify(alunos));
+
+mostrarAlunos(alunos);
+
+}
+
+function limparAlunos(){
+
+localStorage.removeItem("alunos");
+
+alunos=[];
+
+mostrarAlunos(alunos);
+
+}
+
+mostrarAlunos(alunos);
+
+</script>
+
+</body>
+
+</html>
