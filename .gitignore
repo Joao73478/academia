@@ -1,0 +1,9 @@
+Server: localhost
+User: root
+Password: admin
+Database: academia
+Port: 3306
+node_modules
+package-lock.json
+package-lock.json
+package.json
